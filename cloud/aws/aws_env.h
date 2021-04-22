@@ -21,8 +21,6 @@
 #include <unordered_map>
 
 namespace ROCKSDB_NAMESPACE {
-class S3ReadableFile;
-
 //
 // The S3 environment for rocksdb. This class overrides all the
 // file/dir access methods and delegates all other methods to the
@@ -68,21 +66,6 @@ class AwsEnv : public CloudEnvImpl {
   // explicitly make the default region be us-west-2.
   static constexpr const char* default_region = "us-west-2";
 
-  virtual Status LockFile(const std::string& fname, FileLock** lock) override;
-
-  virtual Status UnlockFile(FileLock* lock) override;
-
-  std::string GetWALCacheDir();
-
-  // Saves and retrieves the dbid->dirname mapping in S3
-  Status SaveDbid(const std::string& bucket_name, const std::string& dbid,
-                  const std::string& dirname) override;
-  Status GetPathForDbid(const std::string& bucket, const std::string& dbid,
-                        std::string* dirname) override;
-  Status GetDbidList(const std::string& bucket, DbidList* dblist) override;
-  Status DeleteDbid(const std::string& bucket,
-                    const std::string& dbid) override;
-
  private:
   //
   // The AWS credentials are specified to the constructor via
@@ -91,8 +74,6 @@ class AwsEnv : public CloudEnvImpl {
   explicit AwsEnv(Env* underlying_env, const CloudEnvOptions& cloud_options,
                   const std::shared_ptr<Logger>& info_log = nullptr);
 
-  // The pathname that contains a list of all db's inside a bucket.
-  static constexpr const char* dbid_registry_ = "/.rockset/dbid/";
 
   Random64 rng_;
 };
