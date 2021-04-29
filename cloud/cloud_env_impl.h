@@ -11,6 +11,13 @@
 #include "rocksdb/env.h"
 #include "rocksdb/status.h"
 
+#ifdef _WIN32
+// Windows API macro interference
+#undef DeleteFile
+#undef GetCurrentTime
+#undef GetFreeSpace
+#endif
+
 namespace ROCKSDB_NAMESPACE {
 class CloudScheduler;
 class CloudStorageReadableFile;

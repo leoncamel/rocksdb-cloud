@@ -1,7 +1,7 @@
 // Copyright (c) 2017 Rockset.
 #ifndef ROCKSDB_LITE
 
-#ifndef _WIN32_WINNT
+#ifndef _WIN32
 #include <unistd.h>
 #else
 #include <windows.h>

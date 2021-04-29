@@ -50,6 +50,9 @@ AwsAccessType AwsCloudAccessCredentials::GetAccessType() const {
     return AwsAccessType::kConfig;
   } else if (!access_key_id.empty() || !secret_key.empty()) {
     return AwsAccessType::kSimple;
+  } else if (getenv("AWS_ACCESS_KEY_ID") != nullptr &&
+             getenv("AWS_SECRET_ACCESS_KEY") != nullptr) {
+    return AwsAccessType::kEnvironment;
   }
   return AwsAccessType::kUndefined;
 }
@@ -99,6 +102,7 @@ void AwsCloudAccessCredentials::InitializeConfig(
 Status AwsCloudAccessCredentials::HasValid() const {
   AwsAccessType aws_type = GetAccessType();
   Status status = CheckCredentials(aws_type);
+  printf("MJR: Credentials HasValid=%d status=%s\n", (int) aws_type, status.ToString().c_str());
   return status;
 }
 
@@ -113,6 +117,7 @@ Status AwsCloudAccessCredentials::GetCredentialsProvider(
 
   AwsAccessType aws_type = GetAccessType();
   Status status = CheckCredentials(aws_type);
+  printf("MJR: Credentials=%d status=%s\n", (int) aws_type, status.ToString().c_str());
   if (status.ok()) {
 #ifdef USE_AWS
     switch (aws_type) {
