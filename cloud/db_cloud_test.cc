@@ -64,13 +64,14 @@ class CloudTest : public testing::Test {
 
     CloudEnv* aenv;
     // create a dummy aws env
+
     ASSERT_OK(CloudEnv::NewAwsEnv(base_env_, cloud_env_options_,
                                   options_.info_log, &aenv));
     ASSERT_NE(aenv, nullptr);
     aenv_.reset(aenv);
     // delete all pre-existing contents from the bucket
     Status st = aenv_->GetCloudEnvOptions().storage_provider->EmptyBucket(
-        aenv_->GetSrcBucketName(), dbname_);
+        aenv_->GetSrcBucketName(), aenv_->GetSrcObjectPath());
     ASSERT_TRUE(st.ok() || st.IsNotFound());
     aenv_.reset();
 
@@ -109,7 +110,7 @@ class CloudTest : public testing::Test {
                                       options_.info_log, &aenv);
       if (st.ok()) {
         aenv->GetCloudEnvOptions().storage_provider->EmptyBucket(
-            aenv->GetSrcBucketName(), dbname_);
+            aenv->GetSrcBucketName(), aenv->GetSrcObjectPath());
         delete aenv;
       }
     }
@@ -1539,8 +1540,11 @@ TEST_F(CloudTest, SharedBlockCache) {
 
 }  //  namespace ROCKSDB_NAMESPACE
 
+#include "port/stack_trace.h"
+
 // A black-box test for the cloud wrapper around rocksdb
 int main(int argc, char** argv) {
+  ROCKSDB_NAMESPACE::port::InstallStackTraceHandler();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

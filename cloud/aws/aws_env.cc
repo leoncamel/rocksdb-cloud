@@ -102,7 +102,6 @@ void AwsCloudAccessCredentials::InitializeConfig(
 Status AwsCloudAccessCredentials::HasValid() const {
   AwsAccessType aws_type = GetAccessType();
   Status status = CheckCredentials(aws_type);
-  printf("MJR: Credentials HasValid=%d status=%s\n", (int) aws_type, status.ToString().c_str());
   return status;
 }
 
@@ -117,7 +116,6 @@ Status AwsCloudAccessCredentials::GetCredentialsProvider(
 
   AwsAccessType aws_type = GetAccessType();
   Status status = CheckCredentials(aws_type);
-  printf("MJR: Credentials=%d status=%s\n", (int) aws_type, status.ToString().c_str());
   if (status.ok()) {
 #ifdef USE_AWS
     switch (aws_type) {
@@ -166,6 +164,7 @@ Status AwsCloudAccessCredentials::GetCredentialsProvider(
 }
 
 #ifdef USE_AWS
+static Aws::SDKOptions sdkOptions;
 
 //
 // The AWS credentials are specified to the constructor via
@@ -174,7 +173,8 @@ Status AwsCloudAccessCredentials::GetCredentialsProvider(
 AwsEnv::AwsEnv(Env* underlying_env, const CloudEnvOptions& _cloud_env_options,
                const std::shared_ptr<Logger>& info_log)
     : CloudEnvImpl(_cloud_env_options, underlying_env, info_log) {
-  Aws::InitAPI(Aws::SDKOptions());
+  Aws::InitAPI(sdkOptions);  //**TODO: Move this into PrepareOptions and do it
+                             // conditionally (first time)
   if (cloud_env_options.src_bucket.GetRegion().empty() ||
       cloud_env_options.dest_bucket.GetRegion().empty()) {
     std::string region;
@@ -192,7 +192,11 @@ AwsEnv::AwsEnv(Env* underlying_env, const CloudEnvOptions& _cloud_env_options,
   base_env_ = underlying_env;
 }
 
-void AwsEnv::Shutdown() { Aws::ShutdownAPI(Aws::SDKOptions()); }
+AwsEnv::~AwsEnv() {
+  //**TODO: Conditionally call shutdown (or make shutdown conditional on last...
+}
+
+void AwsEnv::Shutdown() { Aws::ShutdownAPI(sdkOptions); }
 
 //
 // All db in a bucket are stored in path /.rockset/dbid/<dbid>
