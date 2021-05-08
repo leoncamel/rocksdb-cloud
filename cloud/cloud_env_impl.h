@@ -321,7 +321,9 @@ class CloudEnvImpl : public CloudEnv {
   bool test_disable_cloud_manifest_{false};
 
   // scratch space in local dir
-  static constexpr const char* SCRATCH_LOCAL_DIR = "/tmp";
+  std::string GetScratchDirectory() const;
+  std::string GetScratchFile() const;
+
   std::mutex files_to_delete_mutex_;
   std::chrono::seconds file_deletion_delay_ = std::chrono::hours(1);
   std::unordered_map<std::string, int> files_to_delete_;
