@@ -15,6 +15,7 @@
 #include "cloud/db_cloud_impl.h"
 #include "cloud/filename.h"
 #include "cloud/manifest_reader.h"
+#include "file/file_util.h"
 #include "file/filename.h"
 #include "logging/logging.h"
 #include "rocksdb/cloud/cloud_storage_provider.h"
@@ -47,7 +48,7 @@ class CloudTest : public testing::Test {
     persistent_cache_size_gb_ = 0;
     db_ = nullptr;
 
-    DestroyDir(dbname_);
+    DestroyDir(base_env_, dbname_);
     base_env_->CreateDirIfMissing(dbname_);
     base_env_->NewLogger(test::TmpDir(base_env_) + "/rocksdb-cloud.log",
                          &options_.info_log);
@@ -75,7 +76,7 @@ class CloudTest : public testing::Test {
     ASSERT_TRUE(st.ok() || st.IsNotFound());
     aenv_.reset();
 
-    DestroyDir(clone_dir_);
+    DestroyDir(base_env_, clone_dir_);
     ASSERT_OK(base_env_->CreateDir(clone_dir_));
   }
 
@@ -94,12 +95,6 @@ class CloudTest : public testing::Test {
   std::set<std::string> GetSSTFilesClone(std::string name) {
     std::string cname = clone_dir_ + "/" + name;
     return GetSSTFiles(cname);
-  }
-
-  void DestroyDir(const std::string& dir) {
-    std::string cmd = "rm -rf " + dir;
-    int rc = system(cmd.c_str());
-    ASSERT_EQ(rc, 0);
   }
 
   virtual ~CloudTest() {
@@ -323,7 +318,7 @@ TEST_F(CloudTest, GetChildrenTest) {
   ASSERT_OK(db_->Flush(FlushOptions()));
 
   CloseDB();
-  DestroyDir(dbname_);
+  DestroyDir(base_env_, dbname_);
   OpenDB();
 
   std::vector<std::string> children;
@@ -567,7 +562,7 @@ TEST_F(CloudTest, KeepLocalFiles) {
   ASSERT_OK(db_->Flush(FlushOptions()));
 
   CloseDB();
-  DestroyDir(dbname_);
+  DestroyDir(base_env_, dbname_);
   OpenDB();
 
   std::vector<std::string> files;
@@ -598,14 +593,14 @@ TEST_F(CloudTest, CopyToFromS3) {
     cloud_env_options_.use_aws_transfer_manager = iter == 1;
     CreateAwsEnv();
     ((CloudEnvImpl*)aenv_.get())->TEST_InitEmptyCloudManifest();
-    char buffer[1 * 1024 * 1024];
+    char buffer[10 * 1024];
 
     // create a 10 MB file and upload it to cloud
     {
       std::unique_ptr<WritableFile> writer;
       ASSERT_OK(aenv_->NewWritableFile(fname, &writer, EnvOptions()));
 
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 1024; i++) {
         ASSERT_OK(writer->Append(Slice(buffer, sizeof(buffer))));
       }
       // sync and close file
@@ -620,7 +615,7 @@ TEST_F(CloudTest, CopyToFromS3) {
       ASSERT_OK(aenv_->NewRandomAccessFile(fname, &reader, EnvOptions()));
 
       uint64_t offset = 0;
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 1024; i++) {
         Slice result;
         char* scratch = &buffer[0];
         ASSERT_OK(reader->Read(offset, sizeof(buffer), &result, scratch));
@@ -815,8 +810,8 @@ TEST_F(CloudTest, KeepLocalLogKafka) {
   delete db_;
   db_ = nullptr;
   aenv_.reset();
-  DestroyDir(dbname_);
-  DestroyDir("/tmp/ROCKSET");
+  DestroyDir(base_env_, dbname_);
+  DestroyDir(base_env_, "/tmp/ROCKSET");
 
   // Create new env.
   CreateAwsEnv();
@@ -853,8 +848,8 @@ TEST_F(CloudTest, DISABLED_KeepLocalLogKinesis) {
   delete db_;
   db_ = nullptr;
   aenv_.reset();
-  DestroyDir(dbname_);
-  DestroyDir("/tmp/ROCKSET");
+  DestroyDir(base_env_, dbname_);
+  DestroyDir(base_env_, "/tmp/ROCKSET");
 
   // Create new env.
   CreateAwsEnv();
@@ -1000,7 +995,7 @@ TEST_F(CloudTest, TwoConcurrentWriters) {
   for (int i = 0; i < 5; ++i) {
     closeDB1();
     if (i == 2) {
-      DestroyDir(firstDB);
+      DestroyDir(base_env_, firstDB);
     }
     // opening the database makes me a master (i.e. CLOUDMANIFEST points to my
     // manifest), my writes are applied to the shared space!
@@ -1012,7 +1007,7 @@ TEST_F(CloudTest, TwoConcurrentWriters) {
     }
     closeDB2();
     if (i == 2) {
-      DestroyDir(secondDB);
+      DestroyDir(base_env_, secondDB);
     }
     // opening the database makes me a master (i.e. CLOUDMANIFEST points to my
     // manifest), my writes are applied to the shared space!
@@ -1089,7 +1084,7 @@ TEST_F(CloudTest, MigrateFromPureRocksDB) {
 // Tests that we can open cloud DB without destination and source bucket set.
 // This is useful for tests.
 TEST_F(CloudTest, NoDestOrSrc) {
-  DestroyDir(dbname_);
+  DestroyDir(base_env_, dbname_);
   cloud_env_options_.keep_local_sst_files = true;
   cloud_env_options_.src_bucket.SetBucketName("");
   cloud_env_options_.src_bucket.SetObjectPath("");
@@ -1109,7 +1104,7 @@ TEST_F(CloudTest, NoDestOrSrc) {
 }
 
 TEST_F(CloudTest, PreloadCloudManifest) {
-  DestroyDir(dbname_);
+  DestroyDir(base_env_, dbname_);
   // Put one key-value
   OpenDB();
   std::string value;
@@ -1408,7 +1403,7 @@ TEST_F(CloudTest, CheckpointToCloud) {
   ASSERT_EQ(2, GetSSTFiles(dbname_).size());
   CloseDB();
 
-  DestroyDir(dbname_);
+  DestroyDir(base_env_, dbname_);
 
   cloud_env_options_.src_bucket = checkpoint_bucket;
 

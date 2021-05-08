@@ -106,10 +106,13 @@ void BucketOptions::TEST_Initialize(const std::string& bucket,
     prefix_ = prefix;
   }
   name_ = prefix_ + bucket_;
-  if (!CloudEnvOptions::GetNameFromEnvironment("ROCKSDB_CLOUD_TEST_OBECT_PATH",
-                                               "ROCKSDB_CLOUD_OBJECT_PATH",
-                                               &object_)) {
-    object_ = object;
+  std::string value;
+  if (CloudEnvOptions::GetNameFromEnvironment("ROCKSDB_CLOUD_TEST_OBECT_PATH",
+                                              "ROCKSDB_CLOUD_OBJECT_PATH",
+                                              &value)) {
+    SetObjectPath(value);
+  } else {
+    SetObjectPath(object);
   }
   if (!CloudEnvOptions::GetNameFromEnvironment(
           "ROCKSDB_CLOUD_TEST_REGION", "ROCKSDB_CLOUD_REGION", &region_)) {
