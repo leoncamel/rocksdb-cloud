@@ -1428,7 +1428,7 @@ TEST_F(CloudTest, CopyObjectTest) {
 
   std::string content = "This is a test file";
   std::string fname = dbname_ + "/100000.sst";
-  std::string dst_fname = dbname_ + "/200000.sst";
+  std::string dst_fname = aenv_->GetSrcObjectPath() + "/200000.sst";
 
   {
     std::unique_ptr<WritableFile> writableFile;
@@ -1436,9 +1436,9 @@ TEST_F(CloudTest, CopyObjectTest) {
     writableFile->Append(content);
     writableFile->Fsync();
   }
-
+  auto remapped = basename(aenv_->RemapFilename(fname));
   Status st = aenv_->GetCloudEnvOptions().storage_provider->CopyCloudObject(
-      aenv_->GetSrcBucketName(), aenv_->RemapFilename(fname),
+      aenv_->GetSrcBucketName(), aenv_->GetSrcObjectPath() + "/" + remapped,
       aenv_->GetSrcBucketName(), dst_fname);
   ASSERT_OK(st);
 
