@@ -1042,6 +1042,7 @@ TEST_F(CloudTest, TwoConcurrentWriters) {
 
   std::string v;
   ASSERT_TRUE(db1->Get(ReadOptions(), "ShouldNotBeApplied", &v).IsNotFound());
+  closeDB1();
 }
 
 // Creates a pure RocksDB database and makes sure we can migrate to RocksDB
