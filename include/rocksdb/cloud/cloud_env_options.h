@@ -182,6 +182,11 @@ class CloudEnvOptions {
   // Specifies the class responsible for writing objects to the cloud
   std::shared_ptr<CloudStorageProvider> storage_provider;
 
+  // TODO: AWS endpoint
+  // Reference:
+  //  - https://github.com/aws/aws-sdk-cpp/blob/master/aws-cpp-sdk-core/source/http/URI.cpp
+  std::string endpointOverride;
+
   // Access credentials
   AwsCloudAccessCredentials credentials;
 

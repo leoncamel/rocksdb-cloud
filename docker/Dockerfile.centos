@@ -1,0 +1,9 @@
+FROM centos:7.9.2009
+
+ENV DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-c"]
+
+RUN mkdir -p /ax-install/
+COPY build_centos_docker.sh /ax-install/
+
+run /ax-install/build_centos_docker.sh

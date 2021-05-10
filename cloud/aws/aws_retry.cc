@@ -122,6 +122,15 @@ Status AwsCloudOptions::GetClientConfiguration(
   config->requestTimeoutMs = 600000;
 
   const auto& cloud_env_options = env->GetCloudEnvOptions();
+  if(!cloud_env_options.endpointOverride.empty()) {
+    Aws::Http::URI uri(cloud_env_options.endpointOverride.c_str());
+    std::stringstream ss_ep;
+    ss_ep << uri.GetAuthority() << ":" << uri.GetPort();
+    config->endpointOverride = ss_ep.str().c_str();
+    config->scheme = uri.GetScheme();
+    config->verifySSL = false;    // TODO:
+  }
+
   // Setup how retries need to be done
   config->retryStrategy = std::make_shared<AwsRetryStrategy>(env);
   if (cloud_env_options.request_timeout_ms != 0) {

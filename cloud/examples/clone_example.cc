@@ -81,6 +81,7 @@ Status CloneDB(const std::string& clone_name, const std::string& src_bucket,
 int main() {
   // cloud environment config options here
   CloudEnvOptions cloud_env_options;
+  cloud_env_options.endpointOverride = "http://127.0.0.1:9000";
 
   // Store a reference to a cloud env. A new cloud env object should be
   // associated

@@ -964,6 +964,10 @@ DEFINE_string(fs_uri, "",
               "URI for registry Filesystem lookup. Mutually exclusive"
               " with --hdfs and --env_uri."
               " Creates a default environment with the specified filesystem.");
+DEFINE_string(aws_s3_endpoint_override, "",
+              "Override endpoint for S3 service."
+              " If you want unofficial s3 service, you shoud set parameter like"
+              " 'http://127.0.0.1:9000' or 'http://172.20.1.34:9090'.");
 DEFINE_string(aws_access_id, "", "Access id for AWS");
 DEFINE_string(aws_secret_key, "", "Secret key for AWS");
 DEFINE_string(aws_region, "", "AWS region");
@@ -1320,6 +1324,11 @@ ROCKSDB_NAMESPACE::Env* CreateAwsEnv(
   info_log.reset(new ROCKSDB_NAMESPACE::StderrLogger(
       ROCKSDB_NAMESPACE::InfoLogLevel::WARN_LEVEL));
   ROCKSDB_NAMESPACE::CloudEnvOptions coptions;
+  if (!FLAGS_aws_s3_endpoint_override.empty()) {
+    fprintf(stderr, "Use override S3 endpoint to '%s'\n",
+        FLAGS_aws_s3_endpoint_override.c_str());
+    coptions.endpointOverride = FLAGS_aws_s3_endpoint_override;
+  }
   std::string region;
   if (FLAGS_aws_access_id.size() != 0) {
     coptions.credentials.InitializeSimple(FLAGS_aws_access_id,

@@ -25,6 +25,8 @@
 #ifdef USE_AWS
 #include <aws/core/Aws.h>
 #include <aws/core/auth/AWSCredentialsProvider.h>
+#include <aws/core/utils/logging/LogLevel.h>
+#include <aws/core/utils/StringUtils.h>
 #endif
 
 #include "cloud/aws/aws_file.h"
@@ -162,6 +164,32 @@ Status AwsCloudAccessCredentials::GetCredentialsProvider(
 
 #ifdef USE_AWS
 
+Aws::Utils::Logging::LogLevel GetLogLevelFromName(const char* name) {
+  const Aws::Utils::Logging::LogLevel defaultLogLevel = Aws::Utils::Logging::LogLevel::Error;
+
+  if (name == NULL) {
+    return defaultLogLevel;
+  }
+
+  if (Aws::Utils::StringUtils::CaselessCompare(name, "Off")) {
+    return Aws::Utils::Logging::LogLevel::Off;
+  } else if (Aws::Utils::StringUtils::CaselessCompare(name, "Fatal")) {
+    return Aws::Utils::Logging::LogLevel::Fatal;
+  } else if (Aws::Utils::StringUtils::CaselessCompare(name, "Error")) {
+    return Aws::Utils::Logging::LogLevel::Error;
+  } else if (Aws::Utils::StringUtils::CaselessCompare(name, "Warn")) {
+    return Aws::Utils::Logging::LogLevel::Warn;
+  } else if (Aws::Utils::StringUtils::CaselessCompare(name, "Info")) {
+    return Aws::Utils::Logging::LogLevel::Info;
+  } else if (Aws::Utils::StringUtils::CaselessCompare(name, "Debug")) {
+    return Aws::Utils::Logging::LogLevel::Debug;
+  } else if (Aws::Utils::StringUtils::CaselessCompare(name, "Trace")) {
+    return Aws::Utils::Logging::LogLevel::Trace;
+  } else {
+    return defaultLogLevel;
+  }
+}
+
 //
 // The AWS credentials are specified to the constructor via
 // access_key_id and secret_key.
@@ -169,7 +197,14 @@ Status AwsCloudAccessCredentials::GetCredentialsProvider(
 AwsEnv::AwsEnv(Env* underlying_env, const CloudEnvOptions& _cloud_env_options,
                const std::shared_ptr<Logger>& info_log)
     : CloudEnvImpl(_cloud_env_options, underlying_env, info_log) {
-  Aws::InitAPI(Aws::SDKOptions());
+  Aws::SDKOptions options;
+  char* my_env = getenv("ROCKSDB_AWS_DEBUG_LEVEL");
+  if (my_env) {
+    options.loggingOptions.logLevel = GetLogLevelFromName(my_env);
+  }
+
+  Aws::InitAPI(options);
+
   if (cloud_env_options.src_bucket.GetRegion().empty() ||
       cloud_env_options.dest_bucket.GetRegion().empty()) {
     std::string region;
