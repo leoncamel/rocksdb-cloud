@@ -23,16 +23,26 @@ public class CloudEnvOptions extends RocksObject {
     super(newCloudEnvOptions());
   }
 
-
   /**
-   * Construct from {@link DBOptions}
+   * Override AWS endpoint.
    *
-   * TODO:
+   * @param endpoint the AWS S3's endpoint address, for example, "http://127.0.0.1:9000".
+   *
+   * @return the reference to these options.
    */
+  public CloudEnvOptions setEndpointOverride(final String endpoint) {
+    setEndpointOverride(nativeHandle_, endpoint);
+    return this;
+  }
 
+  public String endpointOverride() {
+    return getEndpointOverride(nativeHandle_);
+  }
 
   // native functions
   private native static long newCloudEnvOptions();
   @Override protected final native void disposeInternal(final long handle);
 
+  private native static void setEndpointOverride(final long handle, final String endpoint);
+  private native static String getEndpointOverride(final long handle);
 }
