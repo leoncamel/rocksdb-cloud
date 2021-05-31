@@ -2,7 +2,7 @@
 
 export http_proxy=http://172.20.3.242:1087;export https_proxy=http://172.20.3.242:1087;
 
-yum install -y centos-release-scl git make wget which python3 libcurl-devel zlib-devel openssl-devel gflags-devel snappy-devel jemalloc-devel && \
+yum install -y centos-release-scl git make wget which python3 libcurl-devel zlib-devel bzip2-devel lz4-devel libzstd-devel openssl-devel gflags-devel snappy-devel jemalloc-devel && \
     yum install -y devtoolset-8-gcc devtoolset-8-gcc-c++ && \
     source /opt/rh/devtoolset-8/enable
 
