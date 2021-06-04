@@ -3,7 +3,9 @@
 
 #include "include/org_rocksdb_CloudEnvOptions.h"
 #include "rocksdb/cloud/db_cloud.h"
+#include "rocksdb/cloud/cloud_env_options.h"
 #include "rocksdb/options.h"
+#include "rocksjni/portal.h"
 
 /*
  * Class:     org_rocksdb_CloudEnv
@@ -15,13 +17,15 @@ jlong JNICALL Java_org_rocksdb_CloudEnv_createCloudEnv
 
   auto *ceo = reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions *>(jhandle_cloud_env_options);
 
-  CloudEnv* cenv;
-  Status s = CloudEnv::NewAwsEnv(Env::Default(), ceo, nullptr, &cenv);
-  if (!s.ok()) {
-    fprintf(stderr, "Unable to create cloud env in bucket %s. %s\n",
-            bucketName.c_str(), s.ToString().c_str());
+  ROCKSDB_NAMESPACE::CloudEnv* cenv;
+  ROCKSDB_NAMESPACE::Status s =
+    ROCKSDB_NAMESPACE::CloudEnv::NewAwsEnv(ROCKSDB_NAMESPACE::Env::Default(), *ceo, nullptr, &cenv);
 
-    // TODO: Throw exception
+  if (!s.ok()) {
+    // TODO: add logging
+    // fprintf(stderr, "Unable to create cloud env in bucket %s. %s\n",
+    //         bucketName.c_str(), s.ToString().c_str());
+
     ROCKSDB_NAMESPACE::RocksDBExceptionJni::ThrowNew(env, s);
     return 0;
   }
@@ -35,7 +39,7 @@ jlong JNICALL Java_org_rocksdb_CloudEnv_createCloudEnv
  * Signature: (J)V
  */
 void JNICALL Java_org_rocksdb_CloudEnv_disposeInternal
-  (JNIEnv *, jobject, jlong) {
+  (JNIEnv *, jobject, jlong jhandle) {
   auto *eo = reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions *>(jhandle);
   assert(eo != nullptr);
   delete eo;
