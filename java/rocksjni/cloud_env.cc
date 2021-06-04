@@ -1,7 +1,7 @@
 
 #include <jni.h>
 
-#include "include/org_rocksdb_CloudEnvOptions.h"
+#include "include/org_rocksdb_CloudEnv.h"
 #include "rocksdb/cloud/db_cloud.h"
 #include "rocksdb/cloud/cloud_env_options.h"
 #include "rocksdb/options.h"
