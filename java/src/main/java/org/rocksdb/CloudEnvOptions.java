@@ -39,10 +39,26 @@ public class CloudEnvOptions extends RocksObject {
     return getEndpointOverride(nativeHandle_);
   }
 
+  public CloudEnvOptions setSrcBucketOptions(final BucketOptions bucketOptions) {
+    setSrcBucketOptions(nativeHandle_, bucketOptions);
+    return this;
+  }
+
+  public BucketOptions srcBucketOptions() {
+    // TODO:
+    return new BucketOptions();
+  }
+
   // native functions
   private native static long newCloudEnvOptions();
   @Override protected final native void disposeInternal(final long handle);
 
   private native static void setEndpointOverride(final long handle, final String endpoint);
   private native static String getEndpointOverride(final long handle);
+
+  private native static void setSrcBucketOptions(final long handle, BucketOptions srcBucketOptions);
+  private native static BucketOptions getSrcBucketOptions(final long handle);
+
+  private native static void setDestBucketOptions(final long handle, BucketOptions destBucketOptions);
+  private native static BucketOptions getDestBucketOptions(final long handle);
 }

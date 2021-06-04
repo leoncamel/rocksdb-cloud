@@ -13,8 +13,18 @@ class Hello {
 
     System.out.println(origOpts);
 
+    testCloudEnvOptions();
+  }
+
+  public static void testCloudEnvOptions() {
     CloudEnvOptions cloudEnvOptions = new CloudEnvOptions();
+    String tmpEndpointAddr = "http://192.168.1.3:9090";
+
+    cloudEnvOptions.setEndpointOverride(tmpEndpointAddr);
 
     System.out.println(cloudEnvOptions);
+    System.out.println(cloudEnvOptions.endpointOverride());
+
+    assert tmpEndpointAddr == cloudEnvOptions.endpointOverride();
   }
 }
