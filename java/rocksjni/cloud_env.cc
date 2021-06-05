@@ -40,7 +40,7 @@ jlong JNICALL Java_org_rocksdb_CloudEnv_createCloudEnv
  */
 void JNICALL Java_org_rocksdb_CloudEnv_disposeInternal
   (JNIEnv *, jobject, jlong jhandle) {
-  auto *eo = reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions *>(jhandle);
+  auto *eo = reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnv *>(jhandle);
   assert(eo != nullptr);
   delete eo;
 }

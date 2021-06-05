@@ -2,6 +2,8 @@
 import org.rocksdb.DBOptions;
 import org.rocksdb.CloudEnvOptions;
 import org.rocksdb.CloudEnv;
+import org.rocksdb.Options;
+import org.rocksdb.DBCloud;
 
 class Hello {
   public static void main(final String[] args) {
@@ -30,5 +32,24 @@ class Hello {
 
     CloudEnv ce = new CloudEnv(cloudEnvOptions);
     System.out.println(ce.getNativeHandle());
+
+    assert ce.getNativeHandle() != 0;
+
+    Options opts = new Options();
+    opts.setEnv(ce);
+    opts.setCreateIfMissing(true);
+
+    assert opts.getEnv().getNativeHandle() == ce.getNativeHandle();
+
+    String kDBPath = "/tmp/rocksdb_cloud_durable";
+    String persist_path = "";
+    try {
+      DBCloud db_cloud = DBCloud.open(opts, kDBPath, persist_path, 0, false);
+      assert db_cloud.getNativeHandle() > 0;
+      System.out.println("DBCloud Instance " + db_cloud);
+      System.out.println(db_cloud.getNativeHandle());
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
   }
 }
