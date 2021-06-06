@@ -36,15 +36,13 @@ void JNICALL Java_org_rocksdb_CloudEnvOptions_disposeInternal
  */
 void JNICALL Java_org_rocksdb_CloudEnvOptions_setEndpointOverride
   (JNIEnv* env, jclass, jlong jhandle, jstring endpoint) {
+
+  jni::init(env);
+
   auto *options =
     reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle);
-  const char* ep = env->GetStringUTFChars(endpoint, nullptr);
-  if (ep == nullptr) {
-    // exception thrown: OutOfMemoryError
-    return;
-  }
 
-  options->endpointOverride = ep;
+  options->endpointOverride = jni::toString(endpoint);
 }
 
 /*

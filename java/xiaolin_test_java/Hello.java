@@ -17,7 +17,11 @@ class Hello {
 
     System.out.println(origOpts);
 
-    testCloudEnvOptions();
+    for (int i = 0; i < 1000; i++) {
+      testCloudEnvOptions();
+
+      // Thread.sleep(1);
+    }
   }
 
   public static void testCloudEnvOptions() {
@@ -66,8 +70,8 @@ class Hello {
       System.out.println("DBCloud Instance " + db);
       System.out.println(db.getNativeHandle());
 
-      for (int i = 1; i <= 900; ++i) {
-        for (int j = 1; j <= 900; ++j) {
+      for (int i = 1; i <= 9; ++i) {
+        for (int j = 1; j <= 9; ++j) {
           String key = String.format("%08dx%08d", i, j);
           String val = String.format("%016d", i * j);
           db.put(key.getBytes(), val.getBytes());

@@ -180,6 +180,10 @@ namespace jni
      */
     void init(JNIEnv* env);
 
+    std::string toString(jobject handle, bool deleteLocal = true);
+
+    std::wstring toWString(jobject handle, bool deleteLocal = true);
+
     /**
         Object corresponds with a `java.lang.Object` instance. With an Object,
         you can then call Java methods, and access fields on the Object. To

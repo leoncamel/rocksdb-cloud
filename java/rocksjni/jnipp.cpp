@@ -185,7 +185,7 @@ namespace jni
         }
     }
 
-    static std::string toString(jobject handle, bool deleteLocal = true)
+    std::string toString(jobject handle, bool deleteLocal)
     {
         std::string result;
 
@@ -204,7 +204,7 @@ namespace jni
         return result;
     }
 
-    static std::wstring toWString(jobject handle, bool deleteLocal = true)
+    std::wstring toWString(jobject handle, bool deleteLocal)
     {
         std::wstring result;
 
