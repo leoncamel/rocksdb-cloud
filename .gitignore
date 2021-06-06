@@ -93,3 +93,6 @@ compile_commands.json
 .clangd
 clang-format-diff.py
 .py3/
+
+.ccls-cache
+
