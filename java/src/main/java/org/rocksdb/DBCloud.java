@@ -17,7 +17,6 @@ public class DBCloud extends RocksDB {
 
     // final DBCloud db = new DBCloud(open(options.nativeHandle_, path));
     //
-
     return new DBCloud(open(options.nativeHandle_, name,
                             persistent_cache_path, persistent_cache_size_gb,
                             read_only));

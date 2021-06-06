@@ -120,6 +120,8 @@ public class Options extends RocksObject
     assert(isOwningHandle());
     setEnv(nativeHandle_, env.nativeHandle_);
     env_ = env;
+    // Move ownership to Options.
+    env.disOwnNativeHandle();
     return this;
   }
 

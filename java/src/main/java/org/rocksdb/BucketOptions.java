@@ -2,11 +2,11 @@ package org.rocksdb;
 
 public class BucketOptions {
 
-  final String bucket;
-  final String prefix;
-  final String object;
-  final String region;
-  final String name;
+  public String bucket;
+  public String prefix;
+  public String object;
+  public String region;
+  public String name;
 
   public BucketOptions() {
     this.bucket = "";

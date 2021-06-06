@@ -627,4 +627,6 @@ JNI_NATIVE_SOURCES =                                          \
   java/rocksjni/write_buffer_manager.cc                       \
   java/rocksjni/cloud_env_options.cc                          \
   java/rocksjni/cloud_env.cc                                  \
-  java/rocksjni/db_cloud.cc
+  java/rocksjni/db_cloud.cc                                   \
+	java/rocksjni/jnipp.cpp
+

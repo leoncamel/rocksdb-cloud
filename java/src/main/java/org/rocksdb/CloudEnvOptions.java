@@ -49,6 +49,16 @@ public class CloudEnvOptions extends RocksObject {
     return new BucketOptions();
   }
 
+  public CloudEnvOptions setDestBucketOptions(final BucketOptions bucketOptions) {
+    setDestBucketOptions(nativeHandle_, bucketOptions);
+    return this;
+  }
+
+  public BucketOptions destBucketOptions() {
+    // TODO:
+    return new BucketOptions();
+  }
+
   // native functions
   private native static long newCloudEnvOptions();
   @Override protected final native void disposeInternal(final long handle);

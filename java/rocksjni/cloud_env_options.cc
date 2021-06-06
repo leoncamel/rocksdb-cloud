@@ -1,9 +1,10 @@
 
 #include <jni.h>
+#include <iostream>
 
 #include "include/org_rocksdb_CloudEnvOptions.h"
 #include "rocksdb/cloud/cloud_env_options.h"
-
+#include "rocksjni/jnipp.h"
 
 /*
  * Class:     org_rocksdb_CloudEnvOptions
@@ -71,6 +72,8 @@ jstring JNICALL Java_org_rocksdb_CloudEnvOptions_getEndpointOverride
 void JNICALL Java_org_rocksdb_CloudEnvOptions_setSrcBucketOptions
   (JNIEnv* env, jclass, jlong jhandle, jobject bucketOptions) {
 
+  jni::init(env);
+
 	auto *options =
     reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle);
   if (options == nullptr) {
@@ -78,79 +81,20 @@ void JNICALL Java_org_rocksdb_CloudEnvOptions_setSrcBucketOptions
     return;
   }
 
+  jni::Object bo(bucketOptions);
 
-  jclass cls = env->GetObjectClass(bucketOptions);
+  std::string bucket = bo.get<std::string>("bucket");
+  std::string prefix = bo.get<std::string>("prefix");
+  std::string object_path = bo.get<std::string>("object");
+  std::string region = bo.get<std::string>("region");
 
-  /*
-   * Get src_bucket.bucket_
-   */
-  jfieldID fid_bucket = env->GetFieldID(cls, "bucket_", "Ljava/lang/String;");
-  jstring s_val_bucket = (jstring) env->GetObjectField(bucketOptions, fid_bucket);
-
-  // we have to get string bytes into C string
-  const char *c_str_bucket;
-  c_str_bucket = env->GetStringUTFChars (s_val_bucket, NULL);
-  if (c_str_bucket == NULL) {
-    return;
-  }
-  std::string bucket = c_str_bucket;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_bucket, c_str_bucket);
-
-  /*
-   * Get src_bucket.prefix_
-   */
-  // TODO: refactor this duplicated code
-  jfieldID fid_prefix = env->GetFieldID(cls, "prefix_", "Ljava/lang/String;");
-  jstring s_val_prefix = (jstring) env->GetObjectField(bucketOptions, fid_prefix);
-
-  // we have to get string bytes into C string
-  const char *c_str_prefix;
-  c_str_prefix = env->GetStringUTFChars (s_val_prefix, NULL);
-  if (c_str_prefix == NULL) {
-    return;
-  }
-  std::string prefix = c_str_prefix;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_prefix, c_str_prefix);
-
-  /*
-   * Get src_bucket.object_
-   */
-  // TODO: refactor this duplicated code
-  jfieldID fid_object = env->GetFieldID(cls, "object_", "Ljava/lang/String;");
-  jstring s_val_object = (jstring) env->GetObjectField(bucketOptions, fid_object);
-
-  // we have to get string bytes into C string
-  const char *c_str_object;
-  c_str_object = env->GetStringUTFChars (s_val_object, NULL);
-  if (c_str_object == NULL) {
-    return;
-  }
-  std::string object_path = c_str_object;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_object, c_str_object);
-
-  /*
-   * Get src_bucket.region_
-   */
-  // TODO: refactor this duplicated code
-  jfieldID fid_region = env->GetFieldID(cls, "region_", "Ljava/lang/String;");
-  jstring s_val_region = (jstring) env->GetObjectField(bucketOptions, fid_region);
-
-  // we have to get string bytes into C string
-  const char *c_str_region;
-  c_str_region = env->GetStringUTFChars (s_val_region, NULL);
-  if (c_str_region == NULL) {
-    return;
-  }
-  std::string region = c_str_region;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_region, c_str_region);
+#if 0
+  std::cout << "SrcBucketOptions: \n"
+    << "bucket: " << bucket << "\n"
+    << "prefix: " << prefix << "\n"
+    << "object: " << object_path << "\n"
+    << "region: " << region << "\n";
+#endif
 
   options->src_bucket.SetBucketName(bucket, prefix);
   options->src_bucket.SetObjectPath(object_path);
@@ -173,6 +117,8 @@ JNIEXPORT jobject JNICALL Java_org_rocksdb_CloudEnvOptions_getSrcBucketOptions
 void JNICALL Java_org_rocksdb_CloudEnvOptions_setDestBucketOptions
   (JNIEnv* env, jclass, jlong jhandle, jobject bucketOptions) {
 
+  jni::init(env);
+
 	auto *options =
     reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle);
   if (options == nullptr) {
@@ -180,84 +126,24 @@ void JNICALL Java_org_rocksdb_CloudEnvOptions_setDestBucketOptions
     return;
   }
 
+  jni::Object bo(bucketOptions);
 
-  jclass cls = env->GetObjectClass(bucketOptions);
+  std::string bucket = bo.get<std::string>("bucket");
+  std::string prefix = bo.get<std::string>("prefix");
+  std::string object_path = bo.get<std::string>("object");
+  std::string region = bo.get<std::string>("region");
 
-  /*
-   * Get dest_bucket.bucket_
-   */
-  jfieldID fid_bucket = env->GetFieldID(cls, "bucket_", "Ljava/lang/String;");
-  jstring s_val_bucket = (jstring) env->GetObjectField(bucketOptions, fid_bucket);
-
-  // we have to get string bytes into C string
-  const char *c_str_bucket;
-  c_str_bucket = env->GetStringUTFChars (s_val_bucket, NULL);
-  if (c_str_bucket == NULL) {
-    return;
-  }
-  std::string bucket = c_str_bucket;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_bucket, c_str_bucket);
-
-  /*
-   * Get dest_bucket.prefix_
-   */
-  // TODO: refactor this duplicated code
-  jfieldID fid_prefix = env->GetFieldID(cls, "prefix_", "Ljava/lang/String;");
-  jstring s_val_prefix = (jstring) env->GetObjectField(bucketOptions, fid_prefix);
-
-  // we have to get string bytes into C string
-  const char *c_str_prefix;
-  c_str_prefix = env->GetStringUTFChars (s_val_prefix, NULL);
-  if (c_str_prefix == NULL) {
-    return;
-  }
-  std::string prefix = c_str_prefix;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_prefix, c_str_prefix);
-
-  /*
-   * Get dest_bucket.object_
-   */
-  // TODO: refactor this duplicated code
-  jfieldID fid_object = env->GetFieldID(cls, "object_", "Ljava/lang/String;");
-  jstring s_val_object = (jstring) env->GetObjectField(bucketOptions, fid_object);
-
-  // we have to get string bytes into C string
-  const char *c_str_object;
-  c_str_object = env->GetStringUTFChars (s_val_object, NULL);
-  if (c_str_object == NULL) {
-    return;
-  }
-  std::string object_path = c_str_object;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_object, c_str_object);
-
-  /*
-   * Get dest_bucket.region_
-   */
-  // TODO: refactor this duplicated code
-  jfieldID fid_region = env->GetFieldID(cls, "region_", "Ljava/lang/String;");
-  jstring s_val_region = (jstring) env->GetObjectField(bucketOptions, fid_region);
-
-  // we have to get string bytes into C string
-  const char *c_str_region;
-  c_str_region = env->GetStringUTFChars (s_val_region, NULL);
-  if (c_str_region == NULL) {
-    return;
-  }
-  std::string region = c_str_region;
-
-  // after using it, remember to release the memory
-  env->ReleaseStringUTFChars (s_val_region, c_str_region);
+#if 0
+  std::cout << "DestBucketOptions: \n"
+    << "bucket: " << bucket << "\n"
+    << "prefix: " << prefix << "\n"
+    << "object: " << object_path << "\n"
+    << "region: " << region << "\n";
+#endif
 
   options->dest_bucket.SetBucketName(bucket, prefix);
   options->dest_bucket.SetObjectPath(object_path);
   options->dest_bucket.SetRegion(region);
-
 }
 
 /*
