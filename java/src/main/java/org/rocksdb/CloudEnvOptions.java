@@ -84,6 +84,15 @@ public class CloudEnvOptions extends RocksObject {
     return this;
   }
 
+  public CloudEnvOptions setKeepLocalLogFiles(final boolean val) {
+    setKeepLocalLogFiles(nativeHandle_, val);
+    return this;
+  }
+
+  public boolean keepLocalLogFiles() {
+    return getKeepLocalLogFiles(nativeHandle_);
+  }
+
   // native functions
   private native static long newCloudEnvOptions();
   @Override protected final native void disposeInternal(final long handle);
@@ -104,4 +113,8 @@ public class CloudEnvOptions extends RocksObject {
   private native static byte getCloudType(final long handle);
 
   private native static void setKafkaLogOptions(final long handle, final Object options);
+  private native static HashMap<String, String> getKafkaLogOptions(final long handle);
+
+  private native static void setKeepLocalLogFiles(final long handle, final boolean val);
+  private native static boolean getKeepLocalLogFiles(final long handle);
 }

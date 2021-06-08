@@ -7,6 +7,8 @@ import org.rocksdb.DBCloud;
 import org.rocksdb.BucketOptions;
 import org.rocksdb.CloudType;
 import org.rocksdb.LogType;
+import java.util.HashMap;
+import java.util.Map;
 
 class Hello {
   public static void main(final String[] args) {
@@ -47,10 +49,18 @@ class Hello {
     cloudEnvOptions.setSrcBucketOptions(src_bucket);
     cloudEnvOptions.setDestBucketOptions(dest_bucket);
 
-    cloudEnvOptions.setCloudType(CloudType.CloudNone);
-    assert cloudEnvOptions.cloudType() == CloudType.CloudNone;
-    cloudEnvOptions.setLogType(LogType.LogNone);
-    assert cloudEnvOptions.logType() == LogType.LogNone;
+    // cloudEnvOptions.setCloudType(CloudType.CloudNone);
+    // assert cloudEnvOptions.cloudType() == CloudType.CloudNone;
+    cloudEnvOptions.setLogType(LogType.LogKafka);
+    assert cloudEnvOptions.logType() == LogType.LogKafka;
+
+    cloudEnvOptions.setKeepLocalLogFiles(false);
+
+    HashMap<String, String> kafka_options = new HashMap<String, String>() {{
+        put("metadata.broker.list", "172.20.3.83:9092");
+    }};
+    cloudEnvOptions.setKafkaLogOptions(kafka_options);
+
 
     System.out.println(cloudEnvOptions);
     System.out.println(cloudEnvOptions.endpointOverride());

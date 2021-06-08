@@ -5,6 +5,7 @@
 #include "include/org_rocksdb_CloudEnvOptions.h"
 #include "rocksdb/cloud/cloud_env_options.h"
 #include "rocksjni/jnipp.h"
+#include "rocksjni/portal.h"
 
 /*
  * Class:     org_rocksdb_CloudEnvOptions
@@ -200,12 +201,37 @@ jbyte JNICALL Java_org_rocksdb_CloudEnvOptions_getCloudType
  * Signature: (JLjava/lang/Object;)V
  */
 void JNICALL Java_org_rocksdb_CloudEnvOptions_setKafkaLogOptions
-  (JNIEnv* env, jclass, jlong, jobject kafkaLogOptions) {
+  (JNIEnv* env, jclass, jlong jhandle, jobject kafkaLogOptions) {
 
-  jni::init(env);
-
-  jni::Object jo_kafka_log_options(kafkaLogOptions);
+	auto *options =
+    reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle);
+  if (options == nullptr) {
+    // exception thrown: OutOfMemoryError
+    return;
+  }
 
   // jo_kafka_log_options
   // auto x = jo_kafka_log_options.call<Array<std::string>>("keySet", "()Ljava/util/Set;");
+  ROCKSDB_NAMESPACE::HashMapJni::toStlStringStringMap(env,
+      kafkaLogOptions, options->kafka_log_options.client_config_params);
+}
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    setKeepLocalLogFiles
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_org_rocksdb_CloudEnvOptions_setKeepLocalLogFiles
+  (JNIEnv*, jclass, jlong jhandle, jboolean val) {
+  reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle)->keep_local_log_files = val;
+}
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    getKeepLocalLogFiles
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_rocksdb_CloudEnvOptions_getKeepLocalLogFiles
+  (JNIEnv*, jclass, jlong jhandle) {
+  return reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle)->keep_local_log_files;
 }
