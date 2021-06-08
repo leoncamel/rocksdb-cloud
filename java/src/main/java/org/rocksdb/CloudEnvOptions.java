@@ -6,6 +6,8 @@
 
 package org.rocksdb;
 
+import java.util.HashMap;
+
 /**
  * CloudEnvOptions to control the behavior of a rocksdb-cloud database instances.
  *
@@ -59,6 +61,29 @@ public class CloudEnvOptions extends RocksObject {
     return new BucketOptions();
   }
 
+  public CloudEnvOptions setCloudType(final CloudType cloudType) {
+    setCloudType(nativeHandle_, cloudType.getValue());
+    return this;
+  }
+
+  public CloudType cloudType() {
+    return CloudType.getCloudType(getCloudType(nativeHandle_));
+  }
+
+  public CloudEnvOptions setLogType(final LogType logType) {
+    setLogType(nativeHandle_, logType.getValue());
+    return this;
+  }
+
+  public LogType logType() {
+    return LogType.getLogType(getLogType(nativeHandle_));
+  }
+
+  public CloudEnvOptions setKafkaLogOptions(final HashMap<String, String> options) {
+    setKafkaLogOptions(nativeHandle_, options);
+    return this;
+  }
+
   // native functions
   private native static long newCloudEnvOptions();
   @Override protected final native void disposeInternal(final long handle);
@@ -71,4 +96,12 @@ public class CloudEnvOptions extends RocksObject {
 
   private native static void setDestBucketOptions(final long handle, BucketOptions destBucketOptions);
   private native static BucketOptions getDestBucketOptions(final long handle);
+
+  private native static void setLogType(final long handle, final byte logType);
+  private native static byte getLogType(final long handle);
+
+  private native static void setCloudType(final long handle, final byte cloudType);
+  private native static byte getCloudType(final long handle);
+
+  private native static void setKafkaLogOptions(final long handle, final Object options);
 }

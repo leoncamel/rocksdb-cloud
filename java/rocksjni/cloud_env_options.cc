@@ -149,5 +149,63 @@ void JNICALL Java_org_rocksdb_CloudEnvOptions_setDestBucketOptions
  * Method:    getDestBucketOptions
  * Signature: (J)Lorg/rocksdb/BucketOptions;
  */
-JNIEXPORT jobject JNICALL Java_org_rocksdb_CloudEnvOptions_getDestBucketOptions
+jobject JNICALL Java_org_rocksdb_CloudEnvOptions_getDestBucketOptions
   (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    setLogType
+ * Signature: (JB)V
+ */
+void JNICALL Java_org_rocksdb_CloudEnvOptions_setLogType
+  (JNIEnv*, jclass, jlong jhandle, jbyte jlog_type) {
+  reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle)->log_type =
+      static_cast<ROCKSDB_NAMESPACE::LogType>(jlog_type);
+}
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    getLogType
+ * Signature: (J)B
+ */
+jbyte JNICALL Java_org_rocksdb_CloudEnvOptions_getLogType
+  (JNIEnv*, jclass, jlong jhandle) {
+  return reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle)->log_type;
+}
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    setCloudType
+ * Signature: (JB)V
+ */
+void JNICALL Java_org_rocksdb_CloudEnvOptions_setCloudType
+  (JNIEnv *, jclass, jlong jhandle, jbyte jcloud_type) {
+  reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle)->cloud_type =
+      static_cast<ROCKSDB_NAMESPACE::CloudType>(jcloud_type);
+}
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    getCloudType
+ * Signature: (J)B
+ */
+jbyte JNICALL Java_org_rocksdb_CloudEnvOptions_getCloudType
+  (JNIEnv *, jclass, jlong jhandle) {
+  return reinterpret_cast<ROCKSDB_NAMESPACE::CloudEnvOptions*>(jhandle)->cloud_type;
+}
+
+/*
+ * Class:     org_rocksdb_CloudEnvOptions
+ * Method:    setKafkaLogOptions
+ * Signature: (JLjava/lang/Object;)V
+ */
+void JNICALL Java_org_rocksdb_CloudEnvOptions_setKafkaLogOptions
+  (JNIEnv* env, jclass, jlong, jobject kafkaLogOptions) {
+
+  jni::init(env);
+
+  jni::Object jo_kafka_log_options(kafkaLogOptions);
+
+  // jo_kafka_log_options
+  // auto x = jo_kafka_log_options.call<Array<std::string>>("keySet", "()Ljava/util/Set;");
+}

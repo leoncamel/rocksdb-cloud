@@ -86,7 +86,12 @@ NATIVE_JAVA_CLASSES = \
 	org.rocksdb.WriteBatchWithIndex\
 	org.rocksdb.WriteBufferManager\
 	org.rocksdb.WBWIRocksIterator\
-	org.rocksdb.CloudEnvOptions
+	org.rocksdb.CloudEnvOptions\
+	org.rocksdb.CloudEnv\
+	org.rocksdb.BucketOptions\
+	org.rocksdb.DBCloud\
+	org.rocksdb.CloudType\
+	org.rocksdb.LogType
 
 NATIVE_JAVA_TEST_CLASSES = org.rocksdb.RocksDBExceptionTest\
     org.rocksdb.NativeComparatorWrapperTest.NativeStringComparatorWrapper\

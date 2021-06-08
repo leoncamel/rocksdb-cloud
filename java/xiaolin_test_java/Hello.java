@@ -1,10 +1,12 @@
 
 import org.rocksdb.DBOptions;
+import org.rocksdb.Options;
 import org.rocksdb.CloudEnvOptions;
 import org.rocksdb.CloudEnv;
-import org.rocksdb.Options;
 import org.rocksdb.DBCloud;
 import org.rocksdb.BucketOptions;
+import org.rocksdb.CloudType;
+import org.rocksdb.LogType;
 
 class Hello {
   public static void main(final String[] args) {
@@ -44,6 +46,11 @@ class Hello {
 
     cloudEnvOptions.setSrcBucketOptions(src_bucket);
     cloudEnvOptions.setDestBucketOptions(dest_bucket);
+
+    cloudEnvOptions.setCloudType(CloudType.CloudNone);
+    assert cloudEnvOptions.cloudType() == CloudType.CloudNone;
+    cloudEnvOptions.setLogType(LogType.LogNone);
+    assert cloudEnvOptions.logType() == LogType.LogNone;
 
     System.out.println(cloudEnvOptions);
     System.out.println(cloudEnvOptions.endpointOverride());
