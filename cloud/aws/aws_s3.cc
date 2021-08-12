@@ -112,9 +112,13 @@ class AwsS3ClientWrapper {
       const CloudEnvOptions& cloud_options)
       : cloud_request_callback_(cloud_options.cloud_request_callback) {
     if (creds) {
-      client_ = std::make_shared<Aws::S3::S3Client>(creds, config);
+      client_ = std::make_shared<Aws::S3::S3Client>(creds, config,
+          Aws::Client::AWSAuthV4Signer::PayloadSigningPolicy::Never,
+          cloud_options.s3client_use_virtual_addressing);
     } else {
-      client_ = std::make_shared<Aws::S3::S3Client>(config);
+      client_ = std::make_shared<Aws::S3::S3Client>(config,
+          Aws::Client::AWSAuthV4Signer::PayloadSigningPolicy::Never,
+          cloud_options.s3client_use_virtual_addressing);
     }
     if (cloud_options.use_aws_transfer_manager) {
       Aws::Transfer::TransferManagerConfiguration transferManagerConfig(

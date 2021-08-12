@@ -308,6 +308,16 @@ class CloudEnvOptions {
   // Default: false.
   bool skip_cloud_files_in_getchildren;
 
+  //
+  // It will create S3Client with `useVirtualAddressing=true/false`. Note, 
+  // the default parameters for S3Client is `true`, but we use `false` as default.
+  //
+  // Reference:
+  //  - https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html#VirtualHostingSpecifyBucket
+  //
+  // Default: false
+  bool s3client_use_virtual_addressing;
+
   CloudEnvOptions(
       CloudType _cloud_type = CloudType::kCloudAws,
       LogType _log_type = LogType::kLogKafka,
@@ -322,7 +332,8 @@ class CloudEnvOptions {
       bool _use_aws_transfer_manager = false,
       int _number_objects_listed_in_one_iteration = 5000,
       int _constant_sst_file_size_in_sst_file_manager = -1,
-      bool _skip_cloud_files_in_getchildren = false)
+      bool _skip_cloud_files_in_getchildren = false,
+      bool _s3client_use_virtual_addressing = false)
       : cloud_type(_cloud_type),
         log_type(_log_type),
         keep_local_sst_files(_keep_local_sst_files),
@@ -342,7 +353,8 @@ class CloudEnvOptions {
             _number_objects_listed_in_one_iteration),
         constant_sst_file_size_in_sst_file_manager(
             _constant_sst_file_size_in_sst_file_manager),
-        skip_cloud_files_in_getchildren(_skip_cloud_files_in_getchildren) {}
+        skip_cloud_files_in_getchildren(_skip_cloud_files_in_getchildren),
+        s3client_use_virtual_addressing(_s3client_use_virtual_addressing) {}
 
   // print out all options to the log
   void Dump(Logger* log) const;
